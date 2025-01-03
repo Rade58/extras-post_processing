@@ -46,6 +46,37 @@ import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectio
 // - A combination of the two previous options where we test if
 //    the browser supports the antialias on the render target,
 //    and if not, we use an antialias pass
+// -------------------------------------------------------------
+// We will add antialias to the render target
+
+// be default EffectComposer is using WebGLRenderTarget
+// without antialias
+// we will provide WegGLRenderTarget to the composer with antialias
+
+// we need to go to node_modules/three/examples/jsm/postprocessing/EffectComposer.js
+
+// there we need to find how WebGLRenderTarget is created
+// and this is what I found
+// renderTarget = new WebGLRenderTarget( this._width * this._pixelRatio, this._height * this._pixelRatio, { type: HalfFloatType } );
+//
+// the width and heigt are not important because setSize
+// will update them
+
+// so we go to place where we instantiate EffectComposer
+// and we provide our own render target
+
+// after we did this nothing should change
+// because we didn't change anything special
+
+// we will add third argument with property samples to the
+// instantiation of WebGLRenderTarget
+
+// samples of value of 2 will activate antialias
+
+//
+// The more samples, the better the antialias
+// corresponds to no samples
+// ****** Every increase on that value will lower the performance ******
 
 // ------------ gui -------------------
 /**
@@ -406,7 +437,16 @@ if (canvas) {
   // ----------- Post Processing ----------------------------
   // ---------------------------------------------------------
   // ---------------------------------------------------------
-  const effectComposer = new EffectComposer(renderer);
+  // our custom render target
+  // important part is samples, which will activate antialias
+  const renderTarget = new THREE.WebGLRenderTarget(800, 600, {
+    samples: 2,
+  });
+  // width and height are not important because setSize will update them
+  // so we passed random values
+  //
+  // and we pass renderTarget to the composer
+  const effectComposer = new EffectComposer(renderer, renderTarget);
   effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   effectComposer.setSize(sizes.width, sizes.height);
 
