@@ -13,14 +13,28 @@ import { DotScreenPass } from "three/examples/jsm/postprocessing/DotScreenPass.j
 import { GlitchPass } from "three/examples/jsm/postprocessing/GlitchPass.js";
 
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
-import { RGBShiftShader } from "three/examples/jsm/Addons.js";
+
+import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader.js";
+
+import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader.js";
 
 // RGBShift pass
 // It is available as shader sowe need to use ShaderPass class
 // So we need ShaderPass and RGBShiftShader
 
 // it will be cool but it will be dark
-// we will fix that
+//          renderer.outputColorSpace = THREE.SRGBColorSpace;
+// will not fix problem here since rendering targets doesn't support
+// colorSpace
+
+// We will fix dark color by using GammaCorrectionShader
+// which will convert linear color space to sRGB
+
+// but make sure to always use GammaCorrectionShader as a last pass
+// because it won't work
+// and we are planing to add more passes in the future so meke
+// sure that all of them come
+// before GammaCorrectionShader
 
 // ------------ gui -------------------
 /**
@@ -407,6 +421,18 @@ if (canvas) {
   // rgbShiftPass.enabled = false;
 
   effectComposer.addPass(rgbShiftPass);
+
+  // will not fix the problem of rgb shift pass will still be dark
+  // I think maybe this is the default setting
+  // because if we disable rgbShiftPass, and eather we
+  // use this or not, our scene looks the same
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  // -------------------
+  // needs to be last
+  const gammaCorrectionShaderPass = new ShaderPass(GammaCorrectionShader);
+  // gammaCorrectionShaderPass.enabled = false;
+  effectComposer.addPass(gammaCorrectionShaderPass);
 
   // ---------------------------------------------------------
   // ---------------------------------------------------------
