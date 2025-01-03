@@ -30,6 +30,10 @@ import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 // We need to test if the user has a pixel ratio to 1 and if he doesn't support
 // WebGL 2
 // If so, we add the SMAAPass
+
+// by doing this we will cover all cases, all browsers, and all devices
+// in terms of antialiasing
+
 // ------------ gui -------------------
 /**
  * @description Debug UI - lil-ui
