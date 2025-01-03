@@ -24,3 +24,7 @@ but I loaded different model
 I divided old gi stuff into folder "realisticRender"
 
 And when you want to add new things to gui, related to post processing, and it into "postProcessing" folder
+
+# Post Processing examples
+
+<https://threejs.org/docs/index.html#examples/en/postprocessing/EffectComposer>

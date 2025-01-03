@@ -31,7 +31,8 @@ const parameters = {
 const realisticRendering = gui.addFolder("Realistic Rendering");
 realisticRendering.close();
 const postProcessing = gui.addFolder("Post Processing");
-// ----------------------------------
+// -------------------------------------------------------------
+// -------------------------------------------------------------
 
 //------------ canvas settings -----------
 /**
@@ -56,7 +57,7 @@ if (canvas) {
 
   const rgbeLoader = new RGBELoader();
 
-  const textureLoader = new THREE.TextureLoader();
+  // const textureLoader = new THREE.TextureLoader();
 
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
@@ -165,8 +166,6 @@ if (canvas) {
 
       scene.background = environmentMap;
 
-      // torusKnot.material.envMap = environmentMap;
-
       // gltfLoader.load("/models/FlightHelmet/glTF/FlightHelmet.gltf", (gltf) => {
       // gltfLoader.load("/models/car/future_car.glb", (gltf) => {
       gltfLoader.load("/models/cyber_helmet/cyber_helmet.glb", (gltf) => {
@@ -199,67 +198,12 @@ if (canvas) {
   // -------------------------------------------------------------
   // -------------------------------------------------------------
   // -------------------------------------------------------------
-  // FLOOR
-  // Removed these ones (from workshop about realistic rendering)
-  /* const floorColorTexture = textureLoader.load(
-    "/textures/floor/wood_cabinet_worn_long_diff_1k.jpg"
-  );
-  const floorNormalTexture = textureLoader.load(
-    "/textures/floor/wood_cabinet_worn_long_nor_gl_1k.png"
-  );
-  const floorAORoughnessMetalnessTexture = textureLoader.load(
-    "/textures/floor/wood_cabinet_worn_long_arm_1k.jpg"
-  );
-  // WALL
-  const wallColorTexture = textureLoader.load(
-    "/textures/wall/castle_brick_broken_06_diff_1k.jpg"
-  );
-  const wallNormalTexture = textureLoader.load(
-    "/textures/wall/castle_brick_broken_06_nor_gl_1k.png"
-  );
-  const wallAORoughnessMetalnessTexture = textureLoader.load(
-    "/textures/wall/castle_brick_broken_06_arm_1k.jpg"
-  );
-
-  floorColorTexture.colorSpace = THREE.SRGBColorSpace;
-  wallColorTexture.colorSpace = THREE.SRGBColorSpace; */
 
   // ----------------------------------------------
   // ----------------------------------------------
   // Meshes, Geometries, Materials
   // ----------------------------------------------
   // ----------------------------------------------
-  // Removed these ones (from workshop about realistic rendering)
-
-  /* const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(8, 8),
-    new THREE.MeshStandardMaterial({
-      map: floorColorTexture,
-      normalMap: floorNormalTexture,
-      aoMap: floorAORoughnessMetalnessTexture,
-      roughnessMap: floorAORoughnessMetalnessTexture,
-      metalnessMap: floorAORoughnessMetalnessTexture,
-    })
-  );
-
-  floor.rotation.set(-Math.PI / 2, 0, 0);
-  floor.position.y = -4;
-
-  scene.add(floor);
-
-  const wall = new THREE.Mesh(
-    new THREE.PlaneGeometry(8, 8),
-    new THREE.MeshStandardMaterial({
-      map: wallColorTexture,
-      normalMap: wallNormalTexture,
-      aoMap: wallAORoughnessMetalnessTexture,
-      roughnessMap: wallAORoughnessMetalnessTexture,
-      metalnessMap: wallAORoughnessMetalnessTexture,
-    })
-  );
-  wall.position.z = -4;
-
-  scene.add(wall); */
 
   // -------------------------------------------------------------
   // -------------------------------------------------------------
@@ -363,30 +307,6 @@ if (canvas) {
   // -------------------------------------------------------------
   // -------------------------------------------------------------
   // -------------------------------------------------------------
-
-  // This was CubeTexture instance (not used)
-  /* const environmentMap = cubeTextureLoader.load(
-    [
-      "/textures/environmentMaps/underpass/px.png",
-      "/textures/environmentMaps/underpass/nx.png",
-      "/textures/environmentMaps/underpass/py.png",
-      "/textures/environmentMaps/underpass/ny.png",
-      "/textures/environmentMaps/underpass/pz.png",
-      "/textures/environmentMaps/underpass/nz.png",
-    ],
-    () => {
-      console.log("environment map loaded");
-    },
-    () => {
-      console.log("environment map progress");
-    },
-    (err) => {
-      console.log("environment map loading error");
-      console.error(err);
-    }
-  );
-  scene.background = environmentMap; 
-  */
 
   // -------- Controls and helpers
 
