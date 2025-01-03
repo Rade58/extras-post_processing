@@ -21,90 +21,15 @@ import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectio
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 // fixing antialiasing
 
-// check the edges of the model, it should be more smooth,
-// but it might be not so smooth
+// we will combine two solutions we provided in previous lesson
+// 1. render target with antialiasing (samples property on render target (ternary operator))
+// 2. using pass for antialiasing (SMAA pass) (we will use if statement cto test if browser supports WebGL 2)
 
-// this problem occurs on screen where pixel ratio isn't above 1
-
-// but antialias is disabled because of performance reasons
-//effect composer is using render target with antialias disabled
-
-// well you need to fix this anyway because of people
-// with retina displays
-
-// to see the problem make sure that you have one more pass
-// than the renderPass
-// well we enabled glitch
-
-// -------------------------------------------------------------
-// what are the solutions for this problem:
-
-// - Say goodbye to the antialias
-// - Provide our own render target on which we add the antialias,
-//    but that won' work on all the modern browsers
-// - Use a pass to do the antialias but with
-//    lesser performances and a slightly different result
-// - A combination of the two previous options where we test if
-//    the browser supports the antialias on the render target,
-//    and if not, we use an antialias pass
-// -------------------------------------------------------------
-// We will add antialias to the render target
-
-// be default EffectComposer is using WebGLRenderTarget
-// without antialias
-// we will provide WegGLRenderTarget to the composer with antialias
-
-// we need to go to node_modules/three/examples/jsm/postprocessing/EffectComposer.js
-
-// there we need to find how WebGLRenderTarget is created
-// and this is what I found
-// renderTarget = new WebGLRenderTarget( this._width * this._pixelRatio, this._height * this._pixelRatio, { type: HalfFloatType } );
-//
-// the width and heigt are not important because setSize
-// will update them
-
-// so we go to place where we instantiate EffectComposer
-// and we provide our own render target
-
-// after we did this nothing should change
-// because we didn't change anything special
-
-// we will add third argument with property samples to the
-// instantiation of WebGLRenderTarget
-
-// samples of value of 2 will activate antialias
-
-//
-// The more samples, the better the antialias
-// corresponds to no samples
-// ****** Every increase on that value will lower the performance ******
-
-// but because of performances especially for my screen that
-// already doesn't have any problems with antialias, I will set
-// samples to 1
-
-//
-// We don't really need an antialias
-// and we should let the samples property to 1
-// but other screen might have problems with antialias so we will
-// do some ternary operation to check if we should use antialias
-
-// but because of safari wher this might not work
-// we will comment out samples property and use
-// antialias pass instead
-
-// FXAA: Performant, but the result is just "ok" and can be blurry
-// SMAA: Usually better than FXAA but less performant  -  not to be confused with MSAA
-// SSAA: Best quality but the worst performance (author of the workshop uses this one on his portfolio)
-// TAA: Performant but limited result
-//And many others
-
-// we will use SMAA
-// make sure to use it after gamma correction
-
-// but we can still combine two solutions
-// this is what author of the workshop tend to do
-// which I will do in next lesson
+// If the samples property isn't supported (the browser is using WebGL 1), it'll be
+// ignored
+// We need to test if the user has a pixel ratio to 1 and if he doesn't support
+// WebGL 2
+// If so, we add the SMAAPass
 // ------------ gui -------------------
 /**
  * @description Debug UI - lil-ui
@@ -464,26 +389,10 @@ if (canvas) {
   // ----------- Post Processing ----------------------------
   // ---------------------------------------------------------
   // ---------------------------------------------------------
-  // our custom render target
-  // important part is samples, which will activate antialias
-  console.log({ pratio: renderer.getPixelRatio() }); // should change when you resize screen
-  // or if you zoom in to your scene (ctrl + mouse wheel or ctrl + +)
   const renderTarget = new THREE.WebGLRenderTarget(800, 600, {
-    // samples: 2, // this will activate antialias
-    // but we don't want to use it because of performance
-    // and nothing will change because our screen is already
-    // ok
-    // samples: 1,
-    // but other might need this so we will provide ternary
-    // samples: renderer.getPixelRatio() === 1 ? 2 : 0,
-    // this won't work on all the modern browsers
-    // migt be problem with safari
-    // so we will use antialias pass (smaa type)
+    samples: renderer.getPixelRatio() === 1 ? 2 : 0,
   });
-  // width and height are not important because setSize will update them
-  // so we passed random values
-  //
-  // and we pass renderTarget to the composer
+
   const effectComposer = new EffectComposer(renderer, renderTarget);
   effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   effectComposer.setSize(sizes.width, sizes.height);
@@ -521,12 +430,11 @@ if (canvas) {
   // gammaCorrectionShaderPass.enabled = false;
   effectComposer.addPass(gammaCorrectionShaderPass);
 
-  // but this should be last
-  // addinfg random width and height
-  const smaaPass = new SMAAPass(800, 600);
-  // smaaPass.enabled = false;
-  effectComposer.addPass(smaaPass);
-
+  if (renderer.getPixelRatio() === 1 && !renderer.capabilities.isWebGL2) {
+    const smaaPass = new SMAAPass(800, 600);
+    effectComposer.addPass(smaaPass);
+    console.log("Using SMAA");
+  }
   // ---------------------------------------------------------
   // ---------------------------------------------------------
   // ---------------------------------------------------------
