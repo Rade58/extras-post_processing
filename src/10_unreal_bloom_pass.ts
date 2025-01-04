@@ -19,20 +19,19 @@ import { RGBShiftShader } from "three/examples/jsm/shaders/RGBShiftShader.js";
 import { GammaCorrectionShader } from "three/examples/jsm/shaders/GammaCorrectionShader.js";
 
 import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
-// fixing antialiasing
 
-// we will combine two solutions we provided in previous lesson
-// 1. render target with antialiasing (samples property on render target (ternary operator))
-// 2. using pass for antialiasing (SMAA pass) (we will use if statement cto test if browser supports WebGL 2)
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
-// If the samples property isn't supported (the browser is using WebGL 1), it'll be
-// ignored
-// We need to test if the user has a pixel ratio to 1 and if he doesn't support
-// WebGL 2
-// If so, we add the SMAAPass
+// unreal bloom pass
 
-// by doing this we will cover all cases, all browsers, and all devices
-// in terms of antialiasing
+// I have set some values for UnrealBloomPass
+// but you can play with them, by
+// changable with gui
+
+// you can set resolution (with Vector3) strength, radius, threshold
+// strength: how strong is the glow
+// radius: how big is the glow (how far brightness can spread)
+// threshold: how bright something has to be to glow (at what luminosity limit things start to glow)
 
 // ------------ gui -------------------
 /**
@@ -413,7 +412,7 @@ if (canvas) {
 
   const glitchPass = new GlitchPass();
 
-  // glitchPass.enabled = false;
+  glitchPass.enabled = false;
   // glitchPass.goWild = true;
 
   effectComposer.addPass(glitchPass);
@@ -426,6 +425,36 @@ if (canvas) {
 
   // this in not important (does nothing because it is default)
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+  // unreal bloom
+  const unrealBloomPass = new UnrealBloomPass(
+    new THREE.Vector2(sizes.width, sizes.height),
+    1.5,
+    0.4,
+    0.85
+  );
+
+  effectComposer.addPass(unrealBloomPass);
+
+  postProcessing.add(unrealBloomPass, "enabled");
+  postProcessing
+    .add(unrealBloomPass, "strength")
+    .min(0)
+    .max(2)
+    .step(0.001)
+    .name("unreal bloom glowStrength");
+  postProcessing
+    .add(unrealBloomPass, "radius")
+    .min(0)
+    .max(2)
+    .step(0.001)
+    .name("unreal bloom glowRadius");
+  postProcessing
+    .add(unrealBloomPass, "threshold")
+    .min(0)
+    .max(1)
+    .step(0.001)
+    .name("unreal bloom glowThreshold");
 
   // -------------------
   // -------------------
