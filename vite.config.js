@@ -1,3 +1,5 @@
+import glslify from "vite-plugin-glslify";
+
 /** @type {import('vite').UserConfig} */
 export default {
   base: "./",
@@ -12,4 +14,5 @@ export default {
     host: true,
     open: !("SANDBOX_URL" in process.env || "CODESANDBOX_HOST" in process.env),
   },
+  plugins: [glslify()],
 };
