@@ -25,25 +25,19 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 import vertexShader from "./vertex.glsl";
 import fragmentShader from "./fragment.glsl";
 
-// Creating our own passes - Tint Pass
+import displacmentVertexShader from "./displacement/vertex.glsl";
+import displacmentFragmentShader from "./displacement/fragment.glsl";
 
-// it is like creating our own shader
+// Creating our own passes - Displacement Pass
 
-// Create a shader which is an object with the following properties:
-// uniforms - Same format as the uniforms we are used too
-// vertexShader - This one has almost always the same code and will put the plane in front of the view
-// fragmentShader - The fragment shader that will do the post-processing effect
+// here we will use vertex shader to move some vertices
+// ./displacement/vertex.glsl
+// also in ./displacement/fragment.glsl because we will also
+// have fragment related code we already talked about in previous
+// lesson
 
-// look for TintShader and tintPass in the code
-// and look into shader files to see what I did
-
-// uniforms
-// don't forget to set
-//                      tDiffuse: { value: null },  (sampler2D)
-// it will provide texture from previous pass
-
-// we will also set that we change uniform that will be Vector3 instance
-// to add colors to the fragment shader (r, g, b)
+// look for DisplacementShader and displacementPass in code
+// alos look at vertex shader code ofcourse
 
 // ------------ gui -------------------
 /**
@@ -491,6 +485,7 @@ if (canvas) {
   // this will be 0.2 value for red and 0 for green and 0 for blue
   tintPass.material.uniforms.uTint.value = new THREE.Vector3(0.2, 0, 0);
 
+  tintPass.enabled = false;
   effectComposer.addPass(tintPass);
 
   postProcessing.add(tintPass, "enabled").name("tintPass (our custom pass)");
@@ -512,6 +507,24 @@ if (canvas) {
     .max(1)
     .step(0.001)
     .name("uTint blue");
+
+  // ----------
+  const DisplacementShader = {
+    uniforms: {
+      // must have this uniform
+      tDiffuse: { value: null },
+    },
+    vertexShader: displacmentVertexShader,
+    fragmentShader: displacmentFragmentShader,
+  };
+
+  const displacementPass = new ShaderPass(DisplacementShader);
+
+  effectComposer.addPass(displacementPass);
+
+  postProcessing
+    .add(displacementPass, "enabled")
+    .name("displacementPass (our custom pass)");
 
   // ---------------------------------------------------------
   // ---------------------------------------------------------

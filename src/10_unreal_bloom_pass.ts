@@ -436,7 +436,7 @@ if (canvas) {
 
   effectComposer.addPass(unrealBloomPass);
 
-  postProcessing.add(unrealBloomPass, "enabled");
+  postProcessing.add(unrealBloomPass, "enabled").name("unreal bloom");
   postProcessing
     .add(unrealBloomPass, "strength")
     .min(0)
