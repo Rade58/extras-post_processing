@@ -42,7 +42,11 @@ void main() {
   
   vec3 lightingDirection = normalize(vec3(-1.0, 1.0, 0.0));
   float lightness = clamp(dot(normalColor, lightingDirection), 0.0, 1.0);
+  
+  // gl_FragColor = vec4(vec3(lightness), 1.0);
+
   color += lightness * 2.0;
+
 
 
   gl_FragColor = color;
