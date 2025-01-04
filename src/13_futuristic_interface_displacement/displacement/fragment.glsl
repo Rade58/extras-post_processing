@@ -7,7 +7,9 @@ varying vec2 vUv;
 // this is uniform we mentioned (mandatory (explained why))
 uniform sampler2D tDiffuse;
 
-uniform float uTime;
+// uniform float uTime;
+
+uniform sampler2D uNormalMap;  // our texture
 
 
 void main() {
@@ -20,14 +22,16 @@ void main() {
   // vec4 color = texture2D(tDiffuse, newUv);
   // gl_FragColor = color;
   // ------------------------------------------------------------ 
-  vec2 newUv = vec2(vUv.x, vUv.y + sin(vUv.x * 10.0 + uTime) * 0.1);
-
-  // newUv.y += 0.5;
-
-
-  vec4 color = texture2D(tDiffuse, newUv);
-  gl_FragColor = color;
+  // testing if textue is working
+  // vec4 mytexture = texture2D(uNormalMap, vUv);
+  // gl_FragColor = mytexture;
   // ------------------------------------------------------------
+  
+  vec3 normalColor = texture2D(uNormalMap, vUv).xyz * 2.0 - 1.0;
+  vec2 newUv = vUv + normalColor.xy * 0.1;
+  vec4 color = texture2D(tDiffuse, newUv);
+  
+  gl_FragColor = color;
 
   // gl_FragColor = vec4(vec3(strength, strength, strength), 1.0);
 }

@@ -30,11 +30,22 @@ import displacmentFragmentShader from "./displacement/fragment.glsl";
 
 // Creating our own passes - Displacement Pass
 
-// here we will use fragment shader to displace some stuff
-// ./displacement/fragment.glsl
+// we will use this texture (it's a normal map)
+// static/textures/interfaceNormalMap.png
 
-// look for DisplacementShader and displacementPass in code
-// alos look at vertex shader code ofcourse
+// it's a rework of previous lesson
+// adding new uniform
+//                    uNormalMap: { value: null }
+// and remove uTime uniform
+//
+
+// author of the workshop really messed with a code till it look
+// good so don't look discouraged if you don't understand it
+
+// again, I'm mentioning to you that we need to send the texture
+// I think we did this in some example where we sent a texture
+// of the flag we animated to look like it's waving
+// look for displacementPass to see how we load the texture
 
 // ------------ gui -------------------
 /**
@@ -513,6 +524,8 @@ if (canvas) {
       // these uniforms always need to be with null value
       // we pass value to them after pass creation
       uTime: { value: null },
+      //
+      uNormalMap: { value: null },
     },
     vertexShader: displacmentVertexShader,
     fragmentShader: displacmentFragmentShader,
@@ -520,7 +533,9 @@ if (canvas) {
 
   const displacementPass = new ShaderPass(DisplacementShader);
 
-  displacementPass.material.uniforms.uTime.value = 0;
+  displacementPass.material.uniforms.uNormalMap.value =
+    new THREE.TextureLoader().load("/textures/interfaceNormalMap.png");
+  // displacementPass.material.uniforms.uTime.value = 0;
 
   effectComposer.addPass(displacementPass);
 
